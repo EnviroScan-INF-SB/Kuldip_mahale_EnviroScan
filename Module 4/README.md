@@ -147,6 +147,21 @@ All models achieved perfect classification on the current dataset.
 - Expand feature set with additional geospatial and meteorological data.
 
 ---
+##  📊 CREATING PERFORMANCE VISUALIZATIONS...
+<img width="920" height="611" alt="image" src="https://github.com/user-attachments/assets/2e6bbbdd-8b6a-40a1-89f0-64936357a1a8" />
+
+
+##  📈 PLOTTING CONFUSION MATRICES...
+
+<img width="1366" height="359" alt="image" src="https://github.com/user-attachments/assets/b7b7317c-1857-4f39-ab60-839180ee15e1" />
+
+## 🔍 ANALYZING FEATURE IMPORTANCE...
+<img width="1094" height="435" alt="image" src="https://github.com/user-attachments/assets/e8c7590b-132e-4c3e-8cc9-f1eec9e4f7fe" />
+
+
+
+
+
 
 ## 📜 License
 
@@ -155,5 +170,13 @@ Use, modify, and distribute freely with attribution.
 
 ---
 
-**Developed as part of the AI-EnviroScan Pollution-Source Prediction Pipeline.**
+
+
+
+
+
+
+
+
+
 
