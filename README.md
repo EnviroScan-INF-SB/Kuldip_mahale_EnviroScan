@@ -26,7 +26,7 @@ Without knowing the sources of pollution, authorities face several obstacles. Th
 
 EnviroScan solves this fundamental problem by leveraging machine learning and geospatial analysis to identify pollution sources with confidence scores, enabling authorities to make evidence-based decisions about where and how to intervene most effectively.
 
-## ### 🌟 What Makes EnviroScan Different?
+## 🌟 What Makes EnviroScan Different?
 
 **From Measurement to Insight**: Traditional systems tell you pollution is high. EnviroScan tells you WHY and what to do about it.
 
@@ -49,6 +49,7 @@ EnviroScan solves this fundamental problem by leveraging machine learning and ge
 ## 🏗️ System Architecture Overview
 
 EnviroScan operates through a modular architecture where each component has a specific responsibility, ensuring maintainability, scalability, and transparency throughout the system.
+<img width="1024" height="1536" alt="ChatGPT Image Nov 7, 2025, 12_44_02 PM" src="https://github.com/user-attachments/assets/cdf75629-2fc5-4f65-b96d-7e2df9b289db" />
 
 **Data Collection Module** gathers information from multiple authoritative sources. Air quality data comes from the OpenAQ API, which aggregates measurements from monitoring stations worldwide. Weather information including temperature, humidity, wind speed, and wind direction is collected from OpenWeatherMap API in real-time. Geospatial features such as road networks, industrial zones, dump sites, and agricultural fields are extracted from OpenStreetMap data using specialized libraries. All data points are timestamped and geolocated with precise latitude and longitude coordinates.
 
