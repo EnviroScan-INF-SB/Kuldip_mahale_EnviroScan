@@ -1,196 +1,272 @@
-# 🧠 AI-EnviroScan: Module 4 – Model Training and Source Prediction
+
+# 🌍 AI-EnviroScan: Module 5 – Geospatial Mapping and Heatmap Visualization
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
-[![scikit-learn](https://img.shields.io/badge/scikit--learn-1.0%2B-orange.svg)](https://scikit-learn.org/)
-[![XGBoost](https://img.shields.io/badge/XGBoost-Latest-red.svg)](https://xgboost.readthedocs.io/)
+[![Folium](https://img.shields.io/badge/Folium-Latest-green.svg)](https://python-visualization.github.io/folium/)
+[![GeoPandas](https://img.shields.io/badge/GeoPandas-Latest-orange.svg)](https://geopandas.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ## 📘 Overview
 
-This module forms the **core intelligence** of the AI-EnviroScan system, focusing on training machine learning models to predict the **source of air pollution** based on pollutant concentrations, weather conditions, and geographical proximity features.
+This module transforms **raw pollution data and ML predictions** into **interactive geospatial visualizations**. By integrating **Folium** and **GeoPandas**, it creates **dynamic pollution heatmaps** that enable users to explore **source-specific insights** and **high-risk zones** through an intuitive map interface.
 
-The system enables accurate identification of pollution sources including:
-- 🏭 **Industrial emissions**
-- 🚗 **Traffic-related pollution**
-- 🏘️ **Residential sources**
-- 🌾 **Agricultural activities**
-- 🌿 **Natural causes**
+The system empowers environmental authorities and researchers to:
+- 🗺️ **Visualize pollution sources** on interactive maps
+- 🔥 **Identify hotspots** through heatmap overlays
+- 🎯 **Track pollution patterns** across regions
+- 📊 **Support data-driven decisions** for environmental policy
 
 ---
 
-## 🎯 Key Features
+## 🎯 Key Objectives
 
-- **Multi-Model Training**: Implements Random Forest, XGBoost, and Decision Tree classifiers
-- **Hyperparameter Optimization**: Uses GridSearchCV for optimal model performance
-- **Comprehensive Evaluation**: Multiple metrics including accuracy, precision, recall, and F1-score
-- **Production-Ready Export**: Saves trained models for dashboard integration
-- **Feature Engineering**: Incorporates pollutant, meteorological, and geospatial data
+- ✅ Visualize **pollution source predictions** on an interactive map interface
+- ✅ Display **heatmaps** based on pollutant severity (PM2.5, PM10, etc.)
+- ✅ Add **source-specific markers** (🏭 Industrial, 🚗 Vehicular, 🏠 Residential, 🌾 Agricultural, 🌿 Natural)
+- ✅ Enable **filtering by date, location, or source category**
+- ✅ Integrate visual maps into the **AI-EnviroScan dashboard** for real-time analysis
 
 ---
 
 ## ⚙️ Workflow
 
-### 1️⃣ Data Preparation
+### 1️⃣ Load Predictions and Geospatial Data
 
-The module begins by preparing the dataset for training:
+Import pollution data with model predictions and location coordinates:
 
 ```python
-from sklearn.model_selection import train_test_split
+import pandas as pd
 
-# Extract features and target variable
-X = df[[
-    'pm25', 'pm10', 'no2', 'so2', 'co', 'o3',
-    'temperature', 'humidity', 'wind_speed', 'proximity_index'
-]]
-y = df['pollution_source']
+# Load predicted results
+predictions = pd.read_csv('pollution_data_all_india_enhanced.csv')
+print(predictions.head())
+```
 
-# Split data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
+**Expected Data Structure:**
+
+| Column | Description | Example |
+|--------|-------------|---------|
+| `city` | City name | Mumbai |
+| `latitude` | Latitude coordinate | 19.0760 |
+| `longitude` | Longitude coordinate | 72.8777 |
+| `pollution_source` | Predicted source | Industrial |
+| `pm25` | PM2.5 concentration | 85.3 |
+| `pm10` | PM10 concentration | 120.5 |
+| `date` | Measurement date | 2025-10-15 |
+
+---
+
+### 2️⃣ Create Interactive Map
+
+Initialize a Folium map centered on your region of interest:
+
+```python
+import folium
+
+# Initialize base map (centered on India as example)
+m = folium.Map(
+    location=[20.5937, 78.9629],  # Center coordinates
+    zoom_start=5,
+    tiles='CartoDB positron'
 )
 ```
 
-**Input Features:**
-- **Pollutant Concentrations**: PM2.5, PM10, NO₂, SO₂, CO, O₃
-- **Meteorological Data**: Temperature, humidity, wind speed, pressure
-- **Geospatial Indicators**: Proximity index to known pollution sources
-
-**Target Variable**: `pollution_source` (categorical)
-
----
-
-### 2️⃣ Model Training
-
-Three classification models are trained and compared:
-
-```python
-from sklearn.ensemble import RandomForestClassifier
-from xgboost import XGBClassifier
-from sklearn.tree import DecisionTreeClassifier
-
-# Initialize models
-rf_model = RandomForestClassifier(random_state=42)
-xgb_model = XGBClassifier(random_state=42)
-dt_model = DecisionTreeClassifier(random_state=42)
-
-# Train models
-rf_model.fit(X_train, y_train)
-xgb_model.fit(X_train, y_train)
-dt_model.fit(X_train, y_train)
-```
-
-| Model | Description |
-|-------|-------------|
-| 🌲 **Random Forest** | Ensemble method using multiple decision trees |
-| ⚡ **XGBoost** | Gradient boosting framework for high performance |
-| 🌳 **Decision Tree** | Single tree-based classifier for baseline comparison |
+**Available Tile Options:**
+- `OpenStreetMap` - Default street map
+- `CartoDB positron` - Clean, light background
+- `CartoDB dark_matter` - Dark theme
+- `Stamen Terrain` - Topographic view
 
 ---
 
-### 3️⃣ Hyperparameter Tuning
+### 3️⃣ Plot Source-Specific Markers
 
-Optimize model parameters for improved accuracy:
+Add distinct visual markers for each pollution source category:
 
 ```python
-from sklearn.model_selection import GridSearchCV
-
-# Define parameter grid
-param_grid = {
-    'n_estimators': [100, 200, 300],
-    'max_depth': [5, 10, 15],
-    'min_samples_split': [2, 5, 10]
+# Define source-specific icons
+source_icons = {
+    'Industrial': '🏭',
+    'Vehicular': '🚗',
+    'Residential': '🏠',
+    'Agricultural': '🌾',
+    'Natural': '🌿'
 }
 
-# Perform grid search
-grid_search = GridSearchCV(
-    RandomForestClassifier(random_state=42),
-    param_grid=param_grid,
-    cv=3,
-    scoring='f1_macro'
-)
-grid_search.fit(X_train, y_train)
-
-# Get best model
-best_model = grid_search.best_estimator_
+# Add markers to map
+for _, row in predictions.iterrows():
+    folium.Marker(
+        location=[row['latitude'], row['longitude']],
+        popup=f"""
+            <b>City:</b> {row['city']}<br>
+            <b>Source:</b> {row['pollution_source']}<br>
+            <b>PM2.5:</b> {row['pm25']} µg/m³<br>
+            <b>Date:</b> {row['date']}
+        """,
+        icon=folium.DivIcon(
+            html=f"<div style='font-size:24px;'>{source_icons.get(row['pollution_source'], '❓')}</div>"
+        )
+    ).add_to(m)
 ```
 
-**Optimization Strategy:**
-- Cross-validation with 3 folds
-- F1-macro scoring for balanced class performance
-- Systematic parameter space exploration
+**Marker Categories:**
+- 🏭 **Industrial** - Factories, manufacturing plants
+- 🚗 **Vehicular** - Traffic emissions, transportation
+- 🏠 **Residential** - Household activities, heating
+- 🌾 **Agricultural** - Crop burning, farming activities
+- 🌿 **Natural** - Dust storms, wildfires
 
 ---
 
-### 4️⃣ Model Evaluation
+### 4️⃣ Generate Pollution Heatmap
 
-Comprehensive evaluation using multiple metrics:
+Visualize pollutant intensity using a heat map overlay:
 
 ```python
-from sklearn.metrics import (
-    accuracy_score, precision_score, recall_score, 
-    f1_score, confusion_matrix, classification_report
-)
+from folium.plugins import HeatMap
 
-# Generate predictions
-y_pred = best_model.predict(X_test)
+# Prepare heat data [latitude, longitude, intensity]
+heat_data = [
+    [row['latitude'], row['longitude'], row['pm25']] 
+    for _, row in predictions.iterrows()
+]
 
-# Calculate metrics
-print("Accuracy:", accuracy_score(y_test, y_pred))
-print("Precision:", precision_score(y_test, y_pred, average='macro'))
-print("Recall:", recall_score(y_test, y_pred, average='macro'))
-print("F1 Score:", f1_score(y_test, y_pred, average='macro'))
-print("\nConfusion Matrix:")
-print(confusion_matrix(y_test, y_pred))
-print("\nClassification Report:")
-print(classification_report(y_test, y_pred))
+# Add heatmap layer
+HeatMap(
+    heat_data,
+    radius=12,        # Size of heat radius
+    blur=20,          # Blur effect
+    max_zoom=6,       # Maximum zoom level
+    gradient={        # Custom color gradient
+        0.0: 'blue',
+        0.5: 'yellow',
+        1.0: 'red'
+    }
+).add_to(m)
 ```
 
-#### 📊 Evaluation Metrics
-
-| Metric | Description |
-|--------|-------------|
-| ✅ **Accuracy** | Overall correct predictions |
-| 🎯 **Precision** | Reliability of positive predictions |
-| 🔁 **Recall** | Ability to capture all relevant sources |
-| 🧩 **F1-Score** | Harmonic mean of precision and recall |
-| 📊 **Confusion Matrix** | Class-wise prediction distribution |
+**Heatmap Parameters:**
+- `radius` - Controls the size of each heat point
+- `blur` - Smoothness of the gradient
+- `max_zoom` - Visibility at different zoom levels
+- `gradient` - Custom color mapping for intensity
 
 ---
 
-### 5️⃣ Model Export
+### 5️⃣ Visualize High-Risk Zones
 
-Export the trained model for production use:
-
-```python
-import joblib
-
-# Save model
-joblib.dump(best_model, 'pollution_source_model.joblib')
-print("✅ Model saved successfully!")
-```
-
-The exported model can be loaded in downstream applications:
+Add color-coded circle markers to indicate severity levels:
 
 ```python
-import joblib
+def get_color(value):
+    """Return color based on pollution level"""
+    if value > 150:
+        return 'red'      # High pollution
+    elif value > 80:
+        return 'orange'   # Moderate pollution
+    else:
+        return 'green'    # Low pollution
 
-# Load model
-model = joblib.load('pollution_source_model.joblib')
+def get_radius(value):
+    """Scale circle size by pollution level"""
+    return value / 3
 
-# Make predictions
-prediction = model.predict(new_data)
+# Add circle markers with severity colors
+for _, row in predictions.iterrows():
+    folium.CircleMarker(
+        location=[row['latitude'], row['longitude']],
+        radius=get_radius(row['pm25']),
+        color=get_color(row['pm25']),
+        fill=True,
+        fillColor=get_color(row['pm25']),
+        fillOpacity=0.6,
+        popup=f"{row['city']}: {row['pm25']} µg/m³"
+    ).add_to(m)
 ```
+
+**Pollution Level Classification:**
+- 🟩 **Low** (0-80 µg/m³) - Good air quality
+- 🟧 **Moderate** (81-150 µg/m³) - Acceptable air quality
+- 🟥 **High** (151+ µg/m³) - Unhealthy air quality
 
 ---
 
-## 📈 Results
+### 6️⃣ Add Filtering Options
 
-**Best Performing Model**: Random Forest / XGBoost (after hyperparameter tuning)
+Enable dynamic filtering for focused analysis:
 
-- ✅ High accuracy across all pollution source categories
-- 🎯 Balanced precision and recall metrics
-- 📊 Strong performance on multi-class classification
-- 💾 Model file: `pollution_source_model.joblib`
+```python
+# Filter by pollution source
+def filter_by_source(data, source):
+    return data[data['pollution_source'] == source]
+
+# Filter by date range
+def filter_by_date(data, start_date, end_date):
+    data['date'] = pd.to_datetime(data['date'])
+    return data[(data['date'] >= start_date) & (data['date'] <= end_date)]
+
+# Filter by pollution threshold
+def filter_by_threshold(data, pollutant='pm25', threshold=100):
+    return data[data[pollutant] > threshold]
+
+# Example: Visualize only vehicular pollution
+vehicular_data = filter_by_source(predictions, 'Vehicular')
+
+# Example: High pollution areas only
+high_pollution = filter_by_threshold(predictions, 'pm25', 150)
+```
+
+**Filtering Capabilities:**
+- 📅 **By Date** - Time series analysis
+- 📍 **By Location** - Regional focus
+- 🏷️ **By Source** - Category-specific insights
+- 📊 **By Threshold** - Severity-based filtering
+
+---
+
+### 7️⃣ Export Interactive Map
+
+Save the map for dashboard integration or web embedding:
+
+```python
+# Save map as HTML
+m.save('pollution_heatmap.html')
+print("✅ Map exported successfully as 'pollution_heatmap.html'")
+
+# Optional: Display in Jupyter Notebook
+from IPython.display import IFrame
+IFrame('pollution_heatmap.html', width=1000, height=600)
+```
+
+**Export Options:**
+- HTML file for web embedding
+- Jupyter Notebook display
+- Dashboard integration
+- Standalone web application
+
+---
+
+## 📈 Visualization Features
+
+### ✅ Heatmap Layer
+- Shows pollution intensity across cities and regions
+- Dynamic color gradients from blue (low) to red (high)
+- Adjustable radius and blur effects
+
+### ✅ Source Markers
+- Icon-based representation of pollution sources
+- Interactive popups with detailed information
+- Category filtering for focused analysis
+
+### ✅ Interactive Filtering
+- Explore by date, category, or city
+- Real-time data updates
+- Custom threshold settings
+
+### ✅ Exportable HTML Map
+- Integrates directly into dashboard UI
+- Embeddable in web applications
+- Shareable with stakeholders
 
 ---
 
@@ -206,7 +282,7 @@ prediction = model.predict(new_data)
 Install required packages:
 
 ```bash
-pip install pandas numpy scikit-learn xgboost joblib
+pip install folium geopandas pandas numpy matplotlib
 ```
 
 Or use the requirements file:
@@ -217,137 +293,205 @@ pip install -r requirements.txt
 
 **requirements.txt:**
 ```
+folium>=0.12.0
+geopandas>=0.10.0
 pandas>=1.3.0
 numpy>=1.21.0
-scikit-learn>=1.0.0
-xgboost>=1.5.0
-joblib>=1.0.0
+matplotlib>=3.4.0
+branca>=0.4.0
 ```
 
 ---
 
 ## 🚀 Usage
 
-### Basic Training Pipeline
+### Complete Workflow Example
 
 ```python
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-import joblib
+import folium
+from folium.plugins import HeatMap
 
-# Load data
-df = pd.read_csv('cleaned_pollution_data.csv')
+# 1. Load data
+predictions = pd.read_csv('predicted_pollution_sources.csv')
 
-# Prepare features
-X = df[['pm25', 'pm10', 'no2', 'so2', 'co', 'o3', 
-        'temperature', 'humidity', 'wind_speed', 'proximity_index']]
-y = df['pollution_source']
+# 2. Initialize map
+m = folium.Map(location=[20.5937, 78.9629], zoom_start=5, tiles='CartoDB positron')
 
-# Split data
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
+# 3. Add markers
+source_icons = {
+    'Industrial': '🏭', 'Vehicular': '🚗', 'Residential': '🏠',
+    'Agricultural': '🌾', 'Natural': '🌿'
+}
 
-# Train model
-model = RandomForestClassifier(random_state=42)
-model.fit(X_train, y_train)
+for _, row in predictions.iterrows():
+    folium.Marker(
+        location=[row['latitude'], row['longitude']],
+        popup=f"City: {row['city']}<br>Source: {row['pollution_source']}",
+        icon=folium.DivIcon(html=f"<div style='font-size:24px;'>{source_icons[row['pollution_source']]}</div>")
+    ).add_to(m)
 
-# Save model
-joblib.dump(model, 'pollution_source_model.joblib')
+# 4. Add heatmap
+heat_data = [[row['latitude'], row['longitude'], row['pm25']] for _, row in predictions.iterrows()]
+HeatMap(heat_data, radius=12, blur=20, max_zoom=6).add_to(m)
+
+# 5. Save map
+m.save('pollution_heatmap.html')
+print("✅ Map created successfully!")
 ```
 
-### Loading and Using the Model
+### Advanced Customization
 
 ```python
-import joblib
-import pandas as pd
+# Add layer control for toggling features
+from folium import FeatureGroup, LayerControl
 
-# Load trained model
-model = joblib.load('pollution_source_model.joblib')
+# Create feature groups
+markers_group = FeatureGroup(name='Pollution Sources')
+heatmap_group = FeatureGroup(name='Heatmap')
+circles_group = FeatureGroup(name='Severity Zones')
 
-# Prepare new data
-new_data = pd.DataFrame({
-    'pm25': [45.2],
-    'pm10': [78.5],
-    'no2': [32.1],
-    'so2': [12.4],
-    'co': [1.2],
-    'o3': [28.6],
-    'temperature': [25.3],
-    'humidity': [65.0],
-    'wind_speed': [4.5],
-    'proximity_index': [0.7]
-})
+# Add features to respective groups
+# ... (add markers, heatmap, circles)
 
-# Make prediction
-prediction = model.predict(new_data)
-print(f"Predicted pollution source: {prediction[0]}")
+# Add groups to map
+markers_group.add_to(m)
+heatmap_group.add_to(m)
+circles_group.add_to(m)
+
+# Add layer control
+LayerControl().add_to(m)
 ```
 
 ---
 
-## 🧩 Integration with Other Modules
+## 📊 Output Files
 
-This module integrates with the AI-EnviroScan ecosystem:
+| File | Description | Usage |
+|------|-------------|-------|
+| `pollution_heatmap.html` | Interactive pollution heatmap | Embed in dashboard or share via web |
+| `predicted_pollution_sources.csv` | Input data with model predictions | Data source for visualization |
+| `geo_visualization.ipynb` | Jupyter notebook for map creation | Development and experimentation |
+| `Maps/` | Folder for map assets | Icons, legends, custom markers |
 
-### Module 5: Dashboard Integration
-- Load the trained model for real-time predictions
-- Visualize predicted sources on geospatial maps
-- Support decision-making for environmental authorities
+---
+
+## 🧩 Integration with AI-EnviroScan Dashboard
+
+### Dashboard Embedding
 
 ```python
-import joblib
 import streamlit as st
+import streamlit.components.v1 as components
 
-# Load model in dashboard
-@st.cache_resource
-def load_model():
-    return joblib.load('pollution_source_model.joblib')
+# Display map in Streamlit dashboard
+def display_pollution_map():
+    with open('pollution_heatmap.html', 'r', encoding='utf-8') as f:
+        map_html = f.read()
+    components.html(map_html, height=600)
 
-model = load_model()
+# Streamlit app
+st.title("🌍 AI-EnviroScan Pollution Map")
+display_pollution_map()
+```
 
-# Use for real-time predictions
-prediction = model.predict(sensor_data)
+### Real-Time Updates
+
+```python
+# Update map with new predictions
+def update_map(new_predictions):
+    m = folium.Map(location=[20.5937, 78.9629], zoom_start=5)
+    # Add updated markers and heatmap
+    # ...
+    m.save('pollution_heatmap.html')
+    return m
+```
+
+### Dashboard Features
+- 📍 **Interactive hotspot identification**
+- 📊 **Real-time pollution tracking**
+- 🎯 **Source-wise analysis**
+- 🚨 **Alert system for high-risk zones**
+- 📈 **Trend analysis over time**
+
+---
+
+## 🎨 Customization Options
+
+### Color Schemes
+
+```python
+# Custom color palette for different sources
+source_colors = {
+    'Industrial': '#FF5733',     # Red
+    'Vehicular': '#FFC300',      # Yellow
+    'Residential': '#28A745',    # Green
+    'Agricultural': '#8B4513',   # Brown
+    'Natural': '#4CAF50'         # Light Green
+}
+```
+
+### Map Styles
+
+```python
+# Different base map styles
+tiles_options = [
+    'OpenStreetMap',
+    'CartoDB positron',
+    'CartoDB dark_matter',
+    'Stamen Terrain',
+    'Stamen Toner'
+]
+```
+
+### Icon Customization
+
+```python
+# HTML-based custom icons
+custom_icon = folium.DivIcon(html=f"""
+    <div style="
+        font-size: 20px;
+        color: white;
+        background-color: red;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        line-height: 30px;
+    ">🏭</div>
+""")
 ```
 
 ---
 
-## 📊 Model Performance
+## 📈 Performance Optimization
 
-Expected performance metrics on test data:
-
-| Metric | Value |
-|--------|-------|
-| Accuracy | ~85-92% |
-| Macro Precision | ~83-90% |
-| Macro Recall | ~82-89% |
-| Macro F1-Score | ~82-89% |
-
-*Note: Actual performance depends on data quality and distribution*
-
----
-
-## 🔍 Feature Importance
-
-The model identifies key features contributing to predictions:
+### Large Dataset Handling
 
 ```python
-import matplotlib.pyplot as plt
-import numpy as np
+# Use MarkerCluster for many points
+from folium.plugins import MarkerCluster
 
-# Get feature importance
-importances = best_model.feature_importances_
-features = X.columns
+marker_cluster = MarkerCluster().add_to(m)
 
-# Sort and plot
-indices = np.argsort(importances)[::-1]
-plt.figure(figsize=(10, 6))
-plt.bar(range(len(importances)), importances[indices])
-plt.xticks(range(len(importances)), features[indices], rotation=45)
-plt.title('Feature Importance for Pollution Source Prediction')
-plt.tight_layout()
-plt.show()
+for _, row in predictions.iterrows():
+    folium.Marker(
+        location=[row['latitude'], row['longitude']],
+        popup=f"{row['city']}"
+    ).add_to(marker_cluster)
+```
+
+### Efficient Heatmap Generation
+
+```python
+# Sample data for better performance
+if len(predictions) > 1000:
+    sampled_data = predictions.sample(1000)
+else:
+    sampled_data = predictions
+
+heat_data = [[row['latitude'], row['longitude'], row['pm25']] 
+             for _, row in sampled_data.iterrows()]
 ```
 
 ---
@@ -357,9 +501,9 @@ plt.show()
 Contributions are welcome! Please follow these steps:
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/improvement`)
-3. Commit your changes (`git commit -am 'Add new feature'`)
-4. Push to the branch (`git push origin feature/improvement`)
+2. Create a feature branch (`git checkout -b feature/map-enhancement`)
+3. Commit your changes (`git commit -am 'Add new visualization feature'`)
+4. Push to the branch (`git push origin feature/map-enhancement`)
 5. Open a Pull Request
 
 ---
@@ -376,46 +520,40 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 🙏 Acknowledgments
-
-- Scikit-learn community for robust ML tools
-- XGBoost developers for efficient gradient boosting
-- Open-source environmental data providers
-
----
-
 ## 🔗 Related Modules
 
 - **Module 1**: Data Collection and Integration
 - **Module 2**: Data Cleaning and Preprocessing
 - **Module 3**: Feature Engineering
-- **Module 4**: Model Training (This Module)
-- **Module 5**: Dashboard Integration
+- **Module 4**: Model Training and Source Prediction
+- **Module 5**: Geospatial Mapping (This Module)
+- **Module 6**: Dashboard Integration
 
 ---
 
+## 📚 Resources
 
-## Hyperparameter Tuning
-<img width="647" height="215" alt="image" src="https://github.com/user-attachments/assets/740dea8c-3db1-49bf-8d6d-9be70ed731fb" />
+- [Folium Documentation](https://python-visualization.github.io/folium/)
+- [GeoPandas Documentation](https://geopandas.org/)
+- [Leaflet.js Documentation](https://leafletjs.com/)
+- [Air Quality Standards](https://www.who.int/airpollution/guidelines/en/)
 
-## Model Training and Evaluation
-<img width="266" height="270" alt="image" src="https://github.com/user-attachments/assets/0fc1a412-a796-4957-bafa-3ad887106b36" />
+---
 
-## Model Performance Comparison
-<img width="434" height="128" alt="image" src="https://github.com/user-attachments/assets/e0424675-5f70-4db5-82e0-9f6c4ce85103" />
+## Geospatial Mapping and Heatmap Visualization  
 
-## Model Perfomance Comparison 
-<img width="917" height="607" alt="image" src="https://github.com/user-attachments/assets/3b126ce5-1577-43f4-9212-79a10b6c9484" />
+## Create Sensor Markers Map
+<img width="327" height="44" alt="image" src="https://github.com/user-attachments/assets/fc2477cf-ed82-42ff-8318-bc8085ebdbbf" />
 
-## Confusion Matrix
-<img width="1360" height="406" alt="image" src="https://github.com/user-attachments/assets/eb271704-2d50-4f1c-8127-69a3cbfe2a2b" />
+## Create Pollution Heatmap
+<img width="331" height="105" alt="image" src="https://github.com/user-attachments/assets/62fb859b-dcb1-4681-944c-8a7002003908" />
 
-## Analyzing Feature Importance
-<img width="1360" height="598" alt="image" src="https://github.com/user-attachments/assets/778d75be-5c54-4b79-8b40-aabb542ae0da" />
+## Create Risk Zone Map
+<img width="340" height="47" alt="image" src="https://github.com/user-attachments/assets/83ff2019-7020-43e5-a078-89ac28d7235e" />
 
-## Deatailed Report
-<img width="435" height="515" alt="image" src="https://github.com/user-attachments/assets/9e918778-7864-4d26-b3b6-538fed804702" />
+## ALL Maps's and HeatMap Create
+<img width="399" height="435" alt="image" src="https://github.com/user-attachments/assets/bf89cef9-dd19-4207-8907-c4b0dae624e8" />
+<img width="693" height="433" alt="image" src="https://github.com/user-attachments/assets/87835808-d1c8-4bff-a611-e376a972d03e" />
 
-## 
 **Last Updated**: November 2025  
 **Version**: 1.0.0
