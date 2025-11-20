@@ -785,7 +785,47 @@ The dashboard presents several key sections:
 - **Filter Controls**: Filter by pollution source type, confidence threshold
 - **Export Options**: Download reports and raw data
 
-#### Main Content Area
-- **Interactive Pollution Map**: Real-time heatmap with source overlays
+## Dashboard
+<img width="1350" height="756" alt="image" src="https://github.com/user-attachments/assets/870299cb-fb7f-4ce3-8ad0-be4f1493f20a" />
+
+## ALL-Zones (6-Zones)
+<img width="1351" height="761" alt="image" src="https://github.com/user-attachments/assets/c22bc278-f08b-466a-937a-60d47f621009" />
+
+## Cities (60-Cities)
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/3fa0d797-e62a-48c5-b42b-7c63834359b4" />
+
+## Example:- Select West-Zone & City-Nashik REAL TIME DATA
+<img width="1339" height="738" alt="image" src="https://github.com/user-attachments/assets/28067302-06b3-45c4-a828-391c513b842e" />
+
+
+## Current Pollutant Level
+<img width="920" height="200" alt="image" src="https://github.com/user-attachments/assets/ed1bdc28-c555-4f81-bda1-050d9fa0d199" />
+
+# Polution Trends Analysis 
+
+## PM2.5
+<img width="1313" height="642" alt="image" src="https://github.com/user-attachments/assets/2b0963b8-6f26-4e8d-8b09-57b3cc4a0bca" />
+
+## PM10
+<img width="1327" height="670" alt="image" src="https://github.com/user-attachments/assets/8089f208-2343-432d-a4a2-e8f5cb7f7c75" />
+
+## no2
+<img width="1328" height="679" alt="image" src="https://github.com/user-attachments/assets/d872164a-94f7-4ed3-9cf4-770fa25116c2" />
+
+## Map - Nashik
+<img width="1362" height="681" alt="image" src="https://github.com/user-attachments/assets/d3db607b-b714-4cb1-b4e9-7a4aeab12d67" />
+
+## Real Time Alerts
+<img width="1309" height="719" alt="image" src="https://github.com/user-attachments/assets/f56c83e1-3949-4a95-b259-bcb5260d479b" />
+
+## Report's
+<img width="1332" height="701" alt="image" src="https://github.com/user-attachments/assets/3d8d98b0-845c-4816-a11a-d31532f142f6" />
+
+## Daily Report Generate(Exel-format)
+<img width="1366" height="360" alt="image" src="https://github.com/user-attachments/assets/7f7f4414-0eee-41c4-97db-650d0d9c60c0" />
+
+## Historical Analysis
+<img width="548" height="399" alt="image" src="https://github.com/user-attachments/assets/d65feac9-87bb-4bf6-8faf-9dd8fee5167b" />
+
 
 For the latest updates and releases, visit https://github.com/Kuldip8975
