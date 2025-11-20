@@ -1,4 +1,4 @@
-# 🌐 AI-EnviroScan: Module 1 – Data Collection from APIs and Location Databases
+# 🌐 AI-EnviroScan: Milestone 1 – Data Collection from APIs and Location Databases
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![OpenAQ](https://img.shields.io/badge/OpenAQ-API-green.svg)](https://openaq.org/)
