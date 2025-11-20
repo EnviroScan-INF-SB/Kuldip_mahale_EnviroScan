@@ -1,4 +1,4 @@
-# 🧠 AI-EnviroScan: Module 4 – Model Training and Source Prediction
+# 🧠 Machine Learning Model Training and Performance Evaluation
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.0%2B-orange.svg)](https://scikit-learn.org/)
