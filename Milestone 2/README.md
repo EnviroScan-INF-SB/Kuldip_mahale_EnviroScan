@@ -1,20 +1,5 @@
-# 🏷️ Module 3: Source Labeling and Simulation
+# 🏷️ Spatial Feature Engineering and Pollution Source Labeling
 
-## 📋 Table of Contents
-- [Overview](#overview)
-- [Pollution Source Categories](#pollution-source-categories)
-- [Labeling Methodology](#labeling-methodology)
-- [Installation](#installation)
-- [Rule-Based Labeling System](#rule-based-labeling-system)
-- [Simulation Engine](#simulation-engine)
-- [Validation Framework](#validation-framework)
-- [Usage Examples](#usage-examples)
-- [Advanced Techniques](#advanced-techniques)
-- [Performance Metrics](#performance-metrics)
-- [Best Practices](#best-practices)
-- [Troubleshooting](#troubleshooting)
-
----
 
 ## 🎯 Overview
 
