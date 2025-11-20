@@ -1,5 +1,6 @@
 
-# 🌍 AI-EnviroScan: Module 5 – Geospatial Mapping and Heatmap Visualization
+# 🌍 Interactive Dashboard Development and System Integration
+
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![Folium](https://img.shields.io/badge/Folium-Latest-green.svg)](https://python-visualization.github.io/folium/)
